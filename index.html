@@ -1,764 +1,636 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Textile Study Assistant</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyMate – Textile Engineering Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;500;600&family=Noto+Serif+Bengali:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:wght@300;400;600&family=Noto+Sans+Bengali:wght@300;400;500;600&display=swap');
-
   :root {
-    --bg: #0d0f1a;
-    --surface: #13162a;
-    --surface2: #1a1e30;
-    --border: #252840;
-    --accent: #7c6af0;
-    --accent2: #a99df5;
-    --accent3: #c5bbff;
-    --text: #e6e2f8;
-    --text-muted: #6b6f8a;
-    --green: #56c27d;
-    --blue: #5b9cf6;
-    --red: #e07070;
-    --orange: #f0a56a;
-    --radius: 14px;
+    --bg:       #0d1117;
+    --surface:  #161b22;
+    --card:     #1c2330;
+    --border:   #30363d;
+    --gold:     #d4a843;
+    --gold2:    #f0c060;
+    --teal:     #2dd4bf;
+    --text:     #e6edf3;
+    --muted:    #8b949e;
+    --danger:   #f85149;
+    --success:  #3fb950;
+    --radius:   10px;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Source Serif 4', Georgia, serif;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
     min-height: 100vh;
+  }
+
+  /* ── Header ─────────────────────────────────── */
+  header {
+    background: linear-gradient(135deg, #0d1117 0%, #1a2233 60%, #1c2a1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 32px 18px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  header .logo {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--gold), #e8a020);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(212,168,67,.35);
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    color: var(--gold2);
+    letter-spacing: .02em;
+  }
+  header p { color: var(--muted); font-size: .82rem; }
+  .badge {
+    margin-left: auto;
+    background: rgba(212,168,67,.15);
+    border: 1px solid rgba(212,168,67,.3);
+    color: var(--gold);
+    font-size: .75rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    white-space: nowrap;
+  }
+
+  /* ── Main layout ─────────────────────────────── */
+  main {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    gap: 24px;
   }
 
-  header {
-    background: linear-gradient(135deg, #0d0f1a 0%, #181228 50%, #0d1520 100%);
+  /* ── Upload / Input card ─────────────────────── */
+  .input-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .input-header {
+    background: linear-gradient(90deg, rgba(212,168,67,.12), transparent);
     border-bottom: 1px solid var(--border);
-    padding: 14px 26px;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    flex-shrink: 0;
-    z-index: 10;
+    gap: 10px;
   }
-  .logo {
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 11px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0;
-    box-shadow: 0 0 18px rgba(124,106,240,0.35);
-  }
-  .header-text h1 {
+  .input-header span { font-size: 18px; }
+  .input-header h2 {
     font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    color: var(--accent3);
-  }
-  .header-text p {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    font-family: 'Noto Sans Bengali', sans-serif;
-    margin-top: 2px;
-  }
-  .badges { margin-left: auto; display: flex; gap: 8px; }
-  .badge {
-    padding: 4px 11px;
-    border-radius: 20px;
-    font-size: 0.66rem;
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-weight: 600;
-  }
-  .badge-free { background: rgba(86,194,125,0.15); color: var(--green); border: 1px solid rgba(86,194,125,0.3); }
-  .badge-nokey { background: rgba(91,156,246,0.15); color: var(--blue); border: 1px solid rgba(91,156,246,0.3); }
-
-  main {
+    font-size: 1.05rem;
+    color: var(--gold2);
     flex: 1;
-    display: grid;
-    grid-template-columns: 48% 52%;
-    height: calc(100vh - 69px);
-    overflow: hidden;
   }
-
-  .panel {
-    display: flex; flex-direction: column;
-    overflow: hidden;
-    border-right: 1px solid var(--border);
-  }
-  .panel:last-child { border-right: none; }
-
-  .panel-header {
-    padding: 11px 18px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--accent2);
-    display: flex; align-items: center; gap: 7px;
-    flex-shrink: 0;
-  }
-
-  .tab-row {
-    display: flex;
-    padding: 9px 12px 0;
-    gap: 5px;
-    background: var(--surface);
-    flex-shrink: 0;
-  }
-  .tab-btn {
-    padding: 6px 13px;
-    border-radius: 7px 7px 0 0;
-    border: 1px solid var(--border);
-    border-bottom: none;
-    background: var(--surface2);
-    color: var(--text-muted);
-    cursor: pointer;
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.73rem;
-    transition: all 0.2s;
-  }
-  .tab-btn.active { background: var(--bg); color: var(--accent3); }
-
-  .tab-content { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-  .tab-content.active { display: flex; }
-
-  #textInputArea {
-    flex: 1;
-    background: var(--bg);
-    color: var(--text);
-    border: none;
-    padding: 16px 18px;
-    font-family: 'Source Serif 4', Georgia, serif;
-    font-size: 0.88rem;
-    line-height: 1.75;
-    resize: none;
-  }
-  #textInputArea:focus { outline: none; }
-  #textInputArea::placeholder { color: var(--text-muted); }
+  .input-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
 
   .drop-zone {
-    flex: 1;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    margin: 14px;
     border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    gap: 11px; cursor: pointer;
-    transition: all 0.2s;
+    border-radius: 8px;
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .25s;
     background: var(--surface);
-    padding: 30px;
+    position: relative;
   }
   .drop-zone:hover, .drop-zone.drag-over {
-    border-color: var(--accent);
-    background: rgba(124,106,240,0.05);
+    border-color: var(--gold);
+    background: rgba(212,168,67,.06);
   }
-  .drop-zone .dz-icon { font-size: 2.6rem; }
-  .drop-zone p {
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    text-align: center; line-height: 1.65;
+  .drop-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
   }
-  .drop-zone span { color: var(--accent2); font-weight: 600; }
-  #fileInput { display: none; }
-  .file-badge {
-    display: none;
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.72rem;
-    color: var(--green);
-    padding: 4px 11px;
-    background: rgba(86,194,125,0.1);
-    border-radius: 20px;
-    border: 1px solid rgba(86,194,125,0.2);
-  }
-  #extractedPreview {
-    display: none;
-    padding: 12px 16px;
-    overflow-y: auto;
-    border-top: 1px solid var(--border);
-    background: var(--bg);
-    flex-shrink: 0;
-    max-height: 38%;
-  }
-  #extractedPreview h4 {
-    font-family: 'Noto Sans Bengali', sans-serif;
-    color: var(--accent);
-    margin-bottom: 7px;
-    font-size: 0.72rem;
-  }
-  #extractedText {
-    font-family: 'Source Serif 4', serif;
-    font-size: 0.8rem;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    color: var(--text);
-    max-height: 180px;
-    overflow-y: auto;
-  }
+  .drop-zone .dz-icon { font-size: 28px; margin-bottom: 6px; }
+  .drop-zone p { color: var(--muted); font-size: .88rem; }
+  .drop-zone p strong { color: var(--gold); }
 
-  .action-bar {
-    padding: 10px 12px;
+  .divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: .82rem; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background: var(--border); }
+
+  textarea {
+    width: 100%;
     background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    flex-shrink: 0;
-    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: .93rem;
+    line-height: 1.7;
+    padding: 14px 16px;
+    resize: vertical;
+    min-height: 160px;
+    transition: border-color .2s;
   }
+  textarea:focus { outline: none; border-color: var(--gold); }
+  textarea::placeholder { color: var(--muted); }
+
+  /* ── Section cards ───────────────────────────── */
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .section-head {
+    border-bottom: 1px solid var(--border);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .section-head .sec-icon { font-size: 18px; }
+  .section-head h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: .97rem;
+    color: var(--gold2);
+    flex: 1;
+    min-width: 120px;
+  }
+  .btn-group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 
   .btn {
-    padding: 7px 13px;
-    border-radius: 8px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: .8rem;
+    font-weight: 600;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all .18s;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-gold {
+    background: rgba(212,168,67,.15);
+    border-color: rgba(212,168,67,.4);
+    color: var(--gold);
+  }
+  .btn-gold:hover:not(:disabled) {
+    background: rgba(212,168,67,.28);
+    border-color: var(--gold);
+  }
+  .btn-teal {
+    background: rgba(45,212,191,.12);
+    border-color: rgba(45,212,191,.35);
+    color: var(--teal);
+  }
+  .btn-teal:hover:not(:disabled) {
+    background: rgba(45,212,191,.22);
+    border-color: var(--teal);
+  }
+  .btn-green {
+    background: rgba(63,185,80,.12);
+    border-color: rgba(63,185,80,.35);
+    color: var(--success);
+  }
+  .btn-green:hover:not(:disabled) {
+    background: rgba(63,185,80,.22);
+    border-color: var(--success);
+  }
+  .btn-red {
+    background: rgba(248,81,73,.12);
+    border-color: rgba(248,81,73,.35);
+    color: var(--danger);
+  }
+  .btn-red:hover:not(:disabled) { background: rgba(248,81,73,.22); }
+
+  .btn.speaking {
+    background: rgba(45,212,191,.3) !important;
+    border-color: var(--teal) !important;
+    animation: pulse-teal 1.2s infinite;
+  }
+  @keyframes pulse-teal {
+    0%,100% { box-shadow: 0 0 0 0 rgba(45,212,191,.5); }
+    50%      { box-shadow: 0 0 0 6px rgba(45,212,191,0); }
+  }
+
+  .section-body { padding: 18px 20px; }
+
+  .output-box {
+    background: var(--surface);
     border: 1px solid var(--border);
-    cursor: pointer;
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.74rem;
-    font-weight: 500;
-    transition: all 0.16s;
-    display: flex; align-items: center; gap: 5px;
-    white-space: nowrap;
-  }
-  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff;
-    border-color: transparent;
-    font-weight: 700;
-    box-shadow: 0 2px 10px rgba(124,106,240,0.28);
-  }
-  .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,106,240,0.38); }
-
-  .btn-secondary { background: var(--surface2); color: var(--text); }
-  .btn-secondary:hover:not(:disabled) { background: var(--border); }
-
-  .btn-green { background: rgba(86,194,125,0.12); color: var(--green); border-color: rgba(86,194,125,0.22); }
-  .btn-green:hover:not(:disabled) { background: rgba(86,194,125,0.2); }
-  .btn-green.speaking { background: rgba(86,194,125,0.28); animation: pglow 1.2s ease-in-out infinite; }
-
-  .btn-orange { background: rgba(240,165,106,0.12); color: var(--orange); border-color: rgba(240,165,106,0.22); }
-  .btn-orange:hover:not(:disabled) { background: rgba(240,165,106,0.2); }
-
-  .btn-blue { background: rgba(91,156,246,0.12); color: var(--blue); border-color: rgba(91,156,246,0.22); }
-  .btn-blue:hover:not(:disabled) { background: rgba(91,156,246,0.2); }
-
-  @keyframes pglow {
-    0%,100% { box-shadow: 0 0 0 0 rgba(86,194,125,0.35); }
-    50% { box-shadow: 0 0 0 5px rgba(86,194,125,0); }
-  }
-
-  .wc-chip {
-    font-size: 0.66rem;
-    color: var(--text-muted);
-    padding: 3px 7px;
-    background: var(--surface2);
-    border-radius: 20px;
-    font-family: monospace;
-    margin-left: auto;
-  }
-
-  /* Output */
-  .out-tabs {
-    display: flex;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .out-tab {
-    flex: 1;
-    padding: 10px 5px;
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.71rem;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .out-tab.active { color: var(--accent3); border-bottom-color: var(--accent); }
-
-  .out-pane { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-  .out-pane.active { display: flex; }
-
-  .result-box {
-    flex: 1;
-    padding: 18px;
-    overflow-y: auto;
-    font-size: 0.88rem;
+    border-radius: 8px;
+    padding: 16px 18px;
+    min-height: 80px;
+    font-size: .92rem;
     line-height: 1.8;
-    font-family: 'Source Serif 4', serif;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
-  .result-box.bengali {
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.93rem;
-    line-height: 2.05;
+  .output-box.bengali {
+    font-family: 'Noto Serif Bengali', 'Source Sans 3', sans-serif;
+    font-size: .95rem;
   }
+  .output-box .placeholder { color: var(--muted); font-style: italic; font-size: .88rem; }
 
-  .empty-state {
-    height: 100%;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 9px; color: var(--text-muted);
-  }
-  .empty-state .icon { font-size: 2rem; opacity: 0.32; }
-  .empty-state p {
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.77rem; text-align: center;
-    max-width: 170px; line-height: 1.6;
-  }
-
-  .out-action-bar {
-    padding: 9px 12px;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex; gap: 6px; flex-wrap: wrap;
-    flex-shrink: 0;
-  }
-
-  .progress-bar { height: 2px; background: var(--border); flex-shrink: 0; }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    width: 0%; transition: width 0.3s;
-  }
-
-  .chunk-info {
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.68rem;
-    color: var(--accent2);
-    padding: 4px 18px;
-    background: rgba(124,106,240,0.08);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
+  /* ── Loader ──────────────────────────────────── */
+  .loader {
     display: none;
+    align-items: center;
+    gap: 10px;
+    color: var(--gold);
+    font-size: .85rem;
+    padding: 10px 0;
   }
-
-  .loading-msg {
-    display: flex; align-items: center; gap: 9px;
-    padding: 22px 18px;
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
+  .loader.active { display: flex; }
   .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
+    width: 18px; height: 18px;
+    border: 2px solid rgba(212,168,67,.25);
+    border-top-color: var(--gold);
     border-radius: 50%;
-    animation: spin 0.7s linear infinite;
+    animation: spin .7s linear infinite;
     flex-shrink: 0;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* ── Toast ───────────────────────────────────── */
   #toast {
-    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
-    background: var(--surface2);
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--card);
     border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: .85rem;
     color: var(--text);
-    padding: 8px 16px;
-    border-radius: 9px;
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 0.78rem;
-    z-index: 9999; opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    max-width: 300px; text-align: center;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all .3s;
+    z-index: 999;
+    max-width: 320px;
   }
-  #toast.show { opacity: 1; }
-  #toast.err { border-color: var(--red); color: var(--red); }
-  #toast.ok { border-color: var(--green); color: var(--green); }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.error { border-color: var(--danger); color: var(--danger); }
+  #toast.success { border-color: var(--success); color: var(--success); }
 
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  /* ── Word count ──────────────────────────────── */
+  .meta-row {
+    display: flex; justify-content: flex-end;
+    font-size: .75rem; color: var(--muted);
+    padding-top: 6px;
+  }
 
-  @media (max-width: 720px) {
-    main { grid-template-columns: 1fr; height: auto; overflow: visible; }
-    body { overflow: auto; }
-    .panel { border-right: none; border-bottom: 1px solid var(--border); min-height: 55vh; }
-    .badges { display: none; }
+  /* ── Process button ──────────────────────────── */
+  .process-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #c49020, #d4a843);
+    border: none;
+    color: #0d1117;
+    font-weight: 700;
+    font-size: .95rem;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    transition: all .2s;
+    box-shadow: 0 4px 18px rgba(212,168,67,.3);
+  }
+  .process-btn:hover { background: linear-gradient(135deg, #d4a843, #f0c060); transform: translateY(-1px); }
+  .process-btn:active { transform: translateY(0); }
+  .process-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; }
+    main { padding: 16px 12px 40px; gap: 16px; }
+    .section-head { gap: 8px; }
+    .btn { padding: 5px 10px; font-size: .75rem; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">📖</div>
-  <div class="header-text">
-    <h1>Textile Study Assistant</h1>
-    <p>৩য় বর্ষ · Textile Engineering · সম্পূর্ণ বিনামূল্যে · কোনো API Key নেই</p>
+  <div class="logo">📚</div>
+  <div>
+    <h1>StudyMate</h1>
+    <p>Textile Engineering · Reading Assistant</p>
   </div>
-  <div class="badges">
-    <span class="badge badge-free">✅ ১০০% ফ্রি</span>
-    <span class="badge badge-nokey">🔓 No API Key</span>
-  </div>
+  <div class="badge">🧵 TE 3rd Year</div>
 </header>
 
 <main>
-  <!-- LEFT -->
-  <div class="panel">
-    <div class="panel-header">📥 টেক্সট ইনপুট</div>
 
-    <div class="tab-row">
-      <button class="tab-btn active" onclick="switchTab('text')">✍️ পেস্ট করুন</button>
-      <button class="tab-btn" onclick="switchTab('file')">📄 PDF / TXT</button>
+  <!-- ── INPUT ── -->
+  <div class="input-card">
+    <div class="input-header">
+      <span>📄</span>
+      <h2>Input – Paste Text or Upload File</h2>
     </div>
-
-    <div class="tab-content active" id="tab-text">
-      <textarea id="textInputArea"
-        placeholder="এখানে বইয়ের টেক্সট পেস্ট করুন...&#10;&#10;Example:&#10;Yarn manufacturing converts fibers into yarn through several stages including opening, carding, drawing, roving and spinning..."></textarea>
-    </div>
-
-    <div class="tab-content" id="tab-file">
-      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-        <div class="dz-icon">📂</div>
-        <p><span>ক্লিক করুন</span> অথবা ফাইল ড্র্যাগ করুন</p>
-        <p style="font-size:0.7rem;margin-top:2px">PDF · TXT সাপোর্টেড</p>
-        <div class="file-badge" id="fileBadge"></div>
+    <div class="input-body">
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" accept=".txt,.pdf,.doc,.docx">
+        <div class="dz-icon">⬆️</div>
+        <p><strong>Click to upload</strong> or drag &amp; drop</p>
+        <p style="margin-top:4px">Supports .txt, .pdf (text-based), .doc, .docx</p>
       </div>
-      <input type="file" id="fileInput" accept=".pdf,.txt" />
-      <div id="extractedPreview">
-        <h4>📋 এক্সট্র্যাক্টেড টেক্সট</h4>
-        <pre id="extractedText"></pre>
-      </div>
-    </div>
 
-    <div class="action-bar">
-      <button class="btn btn-primary" onclick="doTranslate()">🌐 বাংলায় অনুবাদ</button>
-      <button class="btn btn-orange" onclick="doSummarize()">📝 Summary</button>
-      <button class="btn btn-green" id="btnReadOrig" onclick="toggleRead('orig')">🔊 পড়ুন</button>
-      <span class="wc-chip" id="wordCount">0 words</span>
+      <div class="divider">or paste text below</div>
+
+      <textarea id="inputText" placeholder="Paste your textbook content here — English study material, chapter notes, definitions, etc.…" rows="8"></textarea>
+      <div class="meta-row"><span id="inputCount">0 words</span></div>
+
+      <button class="process-btn" id="loadBtn" onclick="loadText()">✦ Load & Analyse Text</button>
     </div>
   </div>
 
-  <!-- RIGHT -->
-  <div class="panel">
-    <div class="out-tabs">
-      <button class="out-tab active" onclick="switchOut('trans')" id="ot-trans">🌐 বাংলা অনুবাদ</button>
-      <button class="out-tab" onclick="switchOut('summ')" id="ot-summ">📝 Summary</button>
-      <button class="out-tab" onclick="switchOut('summ-bn')" id="ot-summ-bn">🌐 বাংলা Summary</button>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-
-    <!-- Translation -->
-    <div class="out-pane active" id="op-trans">
-      <div class="chunk-info" id="transChunkInfo"></div>
-      <div class="result-box bengali" id="transResult">
-        <div class="empty-state"><div class="icon">🌐</div><p>বাংলা অনুবাদ এখানে আসবে</p></div>
-      </div>
-      <div class="out-action-bar">
-        <button class="btn btn-green" id="btnReadTrans" onclick="toggleRead('trans')">🔊 পড়ুন</button>
-        <button class="btn btn-secondary" onclick="copyOut('trans')">📋 কপি</button>
+  <!-- ── ORIGINAL ── -->
+  <div class="section-card" id="sec-original" style="display:none">
+    <div class="section-head">
+      <span class="sec-icon">📝</span>
+      <h3>Original Text (English)</h3>
+      <div class="btn-group">
+        <button class="btn btn-teal" onclick="readAloud('original')">🔊 Read Aloud</button>
+        <button class="btn btn-red"  onclick="stopSpeech()">⏹ Stop</button>
+        <button class="btn btn-gold" onclick="translateText()">🔄 Translate → Bengali</button>
+        <button class="btn btn-green" onclick="summariseText()">📋 Summarise</button>
       </div>
     </div>
-
-    <!-- Summary -->
-    <div class="out-pane" id="op-summ">
-      <div class="result-box" id="summResult">
-        <div class="empty-state"><div class="icon">📝</div><p>সারসংক্ষেপ এখানে আসবে</p></div>
-      </div>
-      <div class="out-action-bar">
-        <button class="btn btn-green" id="btnReadSumm" onclick="toggleRead('summ')">🔊 পড়ুন</button>
-        <button class="btn btn-blue" onclick="translateSummary()">🌐 বাংলায় করুন</button>
-        <button class="btn btn-secondary" onclick="copyOut('summ')">📋 কপি</button>
-      </div>
-    </div>
-
-    <!-- Summary Bengali -->
-    <div class="out-pane" id="op-summ-bn">
-      <div class="chunk-info" id="summBnChunkInfo"></div>
-      <div class="result-box bengali" id="summBnResult">
-        <div class="empty-state"><div class="icon">🌐</div><p>বাংলা সারসংক্ষেপ এখানে আসবে</p></div>
-      </div>
-      <div class="out-action-bar">
-        <button class="btn btn-green" id="btnReadSummBn" onclick="toggleRead('summ-bn')">🔊 পড়ুন</button>
-        <button class="btn btn-secondary" onclick="copyOut('summ-bn')">📋 কপি</button>
-      </div>
+    <div class="section-body">
+      <div class="loader" id="ldr-orig"><div class="spinner"></div> Processing…</div>
+      <div class="output-box" id="out-original"><span class="placeholder">Your text will appear here.</span></div>
     </div>
   </div>
+
+  <!-- ── BENGALI TRANSLATION ── -->
+  <div class="section-card" id="sec-trans" style="display:none">
+    <div class="section-head">
+      <span class="sec-icon">🇧🇩</span>
+      <h3>Bengali Translation (বাংলা অনুবাদ)</h3>
+      <div class="btn-group">
+        <button class="btn btn-teal" onclick="readAloud('translation')">🔊 Read Aloud</button>
+        <button class="btn btn-red"  onclick="stopSpeech()">⏹ Stop</button>
+        <button class="btn btn-gold" onclick="translateText()">🔄 Re-translate</button>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="loader" id="ldr-trans"><div class="spinner"></div> Translating to Bengali…</div>
+      <div class="output-box bengali" id="out-translation"><span class="placeholder">বাংলা অনুবাদ এখানে দেখাবে।</span></div>
+    </div>
+  </div>
+
+  <!-- ── SUMMARY ── -->
+  <div class="section-card" id="sec-summary" style="display:none">
+    <div class="section-head">
+      <span class="sec-icon">💡</span>
+      <h3>English Summary</h3>
+      <div class="btn-group">
+        <button class="btn btn-teal"  onclick="readAloud('summary')">🔊 Read Aloud</button>
+        <button class="btn btn-red"   onclick="stopSpeech()">⏹ Stop</button>
+        <button class="btn btn-green" onclick="summariseText()">🔄 Re-summarise</button>
+        <button class="btn btn-gold"  onclick="translateSummary()">🔄 Translate → Bengali</button>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="loader" id="ldr-sum"><div class="spinner"></div> Summarising…</div>
+      <div class="output-box" id="out-summary"><span class="placeholder">Summary will appear here.</span></div>
+    </div>
+  </div>
+
+  <!-- ── BENGALI SUMMARY ── -->
+  <div class="section-card" id="sec-sumtrans" style="display:none">
+    <div class="section-head">
+      <span class="sec-icon">🇧🇩</span>
+      <h3>Bengali Summary (বাংলা সারসংক্ষেপ)</h3>
+      <div class="btn-group">
+        <button class="btn btn-teal" onclick="readAloud('sumtrans')">🔊 Read Aloud</button>
+        <button class="btn btn-red"  onclick="stopSpeech()">⏹ Stop</button>
+        <button class="btn btn-gold" onclick="translateSummary()">🔄 Re-translate</button>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="loader" id="ldr-sumtrans"><div class="spinner"></div> Translating summary…</div>
+      <div class="output-box bengali" id="out-sumtrans"><span class="placeholder">বাংলা সারসংক্ষেপ এখানে দেখাবে।</span></div>
+    </div>
+  </div>
+
 </main>
 
+<!-- Toast -->
 <div id="toast"></div>
 
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+/* ─────────────── State ─────────────── */
+let originalText  = '';
+let translatedText = '';
+let summaryText    = '';
+let sumtransText   = '';
+let currentUtterance = null;
 
-const store = { trans: '', summ: '', 'summ-bn': '' };
-let speakTarget = null;
-
-// ── Tabs ──
-function switchTab(name) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) =>
-    b.classList.toggle('active', ['text','file'][i] === name));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-}
-function switchOut(name) {
-  document.querySelectorAll('.out-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('ot-'+name).classList.add('active');
-  document.querySelectorAll('.out-pane').forEach(p => p.classList.remove('active'));
-  document.getElementById('op-'+name).classList.add('active');
-}
-
-// ── Input text ──
-function getInputText() {
-  const active = document.querySelector('.tab-content.active').id;
-  return active === 'tab-text'
-    ? document.getElementById('textInputArea').value.trim()
-    : document.getElementById('extractedText').textContent.trim();
-}
-document.getElementById('textInputArea').addEventListener('input', () => {
-  const t = document.getElementById('textInputArea').value;
-  document.getElementById('wordCount').textContent =
-    t.trim() ? t.trim().split(/\s+/).length + ' words' : '0 words';
+/* ─────────────── Word count ─────────── */
+const inputTA   = document.getElementById('inputText');
+const inputCount = document.getElementById('inputCount');
+inputTA.addEventListener('input', () => {
+  const w = inputTA.value.trim().split(/\s+/).filter(Boolean).length;
+  inputCount.textContent = w + ' words';
 });
 
-// ── File handling ──
-const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
-fileInput.addEventListener('change', e => { if(e.target.files[0]) handleFile(e.target.files[0]); });
+/* ─────────────── Drag & drop ────────── */
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) readFile(file);
+});
+document.getElementById('fileInput').addEventListener('change', e => {
+  if (e.target.files[0]) readFile(e.target.files[0]);
+});
 
-async function handleFile(file) {
-  toast('ফাইল লোড হচ্ছে...');
+function readFile(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (ext === 'txt') {
+    const reader = new FileReader();
+    reader.onload = ev => { inputTA.value = ev.target.result; inputTA.dispatchEvent(new Event('input')); };
+    reader.readAsText(file);
+  } else if (ext === 'pdf') {
+    showToast('PDF detected. Please copy-paste the text from your PDF reader for best results.', 'error');
+  } else {
+    showToast('Only .txt files can be read automatically. For PDF/DOC, please paste the text.', 'error');
+  }
+}
+
+/* ─────────────── Load text ──────────── */
+function loadText() {
+  const raw = inputTA.value.trim();
+  if (!raw) { showToast('Please paste or upload your textbook text first.', 'error'); return; }
+  originalText = raw;
+  translatedText = ''; summaryText = ''; sumtransText = '';
+
+  setOutput('original', raw);
+  show('sec-original');
+  hide('sec-trans'); hide('sec-summary'); hide('sec-sumtrans');
+  showToast('Text loaded! Now choose an action from the section header.', 'success');
+  document.getElementById('sec-original').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ─────────────── Translate ──────────── */
+async function translateText() {
+  if (!originalText) { showToast('Load your text first.', 'error'); return; }
+  show('sec-trans');
+  showLoader('trans');
+  setOutput('translation', '');
   try {
-    let text = file.name.endsWith('.pdf') ? await extractPdfText(file) : await file.text();
-    if (!text.trim()) { toast('টেক্সট পাওয়া যায়নি।', 'err'); return; }
-    document.getElementById('extractedText').textContent = text;
-    document.getElementById('extractedPreview').style.display = 'block';
-    const fb = document.getElementById('fileBadge');
-    fb.textContent = '✅ ' + file.name; fb.style.display = 'block';
-    document.getElementById('wordCount').textContent = text.trim().split(/\s+/).length + ' words';
-    toast('✅ লোড সম্পন্ন!', 'ok');
-  } catch(e) { toast('সমস্যা: ' + e.message, 'err'); }
-}
-async function extractPdfText(file) {
-  const ab = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({data: ab}).promise;
-  let out = '';
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    out += content.items.map(s => s.str).join(' ') + '\n\n';
-  }
-  return out;
+    const result = await callClaude(
+      `You are an expert English-to-Bengali translator specialising in academic and engineering texts.\n` +
+      `Translate the following English text into natural, clear Bengali (Bangla script). ` +
+      `Preserve technical terms by writing the Bengali explanation followed by the English term in parentheses. ` +
+      `Do NOT add any extra commentary—output ONLY the Bengali translation.\n\n` +
+      `TEXT:\n${originalText}`
+    );
+    translatedText = result;
+    setOutput('translation', result);
+    showToast('Bengali translation ready! 🇧🇩', 'success');
+  } catch(e) { showToast('Translation failed: ' + e.message, 'error'); }
+  hideLoader('trans');
 }
 
-// ── Translation — MyMemory (Free, No Key, ~10k words/day/IP) ──
-async function translateChunk(text) {
-  const url = 'https://api.mymemory.translated.net/get?q=' +
-    encodeURIComponent(text) + '&langpair=en|bn';
-  const res = await fetch(url);
-  const data = await res.json();
-  if (data.responseStatus === 200) return data.responseData.translatedText;
-  throw new Error(data.responseDetails || 'API Error');
-}
-
-function splitToChunks(text, maxLen = 460) {
-  const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
-  const chunks = [];
-  let cur = '';
-  for (const s of sentences) {
-    if ((cur + s).length > maxLen && cur) { chunks.push(cur.trim()); cur = s; }
-    else cur += s;
-  }
-  if (cur.trim()) chunks.push(cur.trim());
-  return chunks;
-}
-
-async function translateAll(text, chunkInfoEl) {
-  const chunks = splitToChunks(text);
-  const results = [];
-  for (let i = 0; i < chunks.length; i++) {
-    if (chunkInfoEl) { chunkInfoEl.style.display = 'block'; chunkInfoEl.textContent = `অনুবাদ হচ্ছে: ${i+1} / ${chunks.length} অংশ...`; }
-    setProgress(Math.round((i / chunks.length) * 90) + 5);
-    let translated = chunks[i];
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try { translated = await translateChunk(chunks[i]); break; }
-      catch(e) { if(attempt===1) break; await sleep(700); }
-    }
-    results.push(translated);
-    if (i < chunks.length - 1) await sleep(320);
-  }
-  if (chunkInfoEl) chunkInfoEl.style.display = 'none';
-  return results.join(' ');
-}
-
-// ── Summary — local JS (no API) ──
-function localSummarize(text) {
-  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-  const stopWords = new Set(['the','and','for','that','this','with','from','are','was','were',
-    'has','have','had','its','their','they','which','what','when','where','also','into','such',
-    'can','not','but','any','all','more','than','been','will','there','these','those','each',
-    'both','other','some','most','over','only','very','about','after','before','during',
-    'through','between','under','within','without','upon','across','toward','among','against',
-    'above','below','near','off','out','per','via','then','thus','hence','however','therefore',
-    'moreover','furthermore','although','though','while','whereas','because','since','unless',
-    'until','whether','either','neither','nor','so','yet','or','a','an','is','it','of','in',
-    'to','be','do','at','as','by','on','up','if','we','he','she','our','you','his','her']);
-  
-  const words = text.toLowerCase().match(/\b[a-z]{3,}\b/g) || [];
-  const freq = {};
-  words.forEach(w => { if(!stopWords.has(w)) freq[w] = (freq[w]||0) + 1; });
-  const maxF = Math.max(1, ...Object.values(freq));
-  Object.keys(freq).forEach(w => freq[w] /= maxF);
-
-  const scored = sentences.map((s, idx) => {
-    const sw = s.toLowerCase().match(/\b[a-z]{3,}\b/g) || [];
-    const score = sw.reduce((a,w) => a+(freq[w]||0), 0) / Math.max(1, sw.length);
-    const posBoost = (idx===0 || idx===sentences.length-1) ? 0.12 : 0;
-    return { s, score: score + posBoost, idx };
-  });
-
-  const n = Math.max(3, Math.ceil(sentences.length * 0.3));
-  const top = scored.sort((a,b) => b.score-a.score).slice(0,n).sort((a,b) => a.idx-b.idx);
-  const summary = top.map(t => t.s.trim()).join(' ');
-
-  const keyTerms = Object.entries(freq)
-    .sort((a,b)=>b[1]-a[1]).slice(0,8)
-    .map(([w]) => w.charAt(0).toUpperCase()+w.slice(1));
-
-  const nums = [...new Set((text.match(/\b\d+(?:\.\d+)?(?:\s*%|\s*°C|\s*mm|\s*cm|\s*g\/cm|\s*tex|\s*denier|\s*N)?\b/g)||[]).filter(n=>n.length>1))].slice(0,6);
-
-  let out = `📌 KEY SUMMARY\n${'─'.repeat(38)}\n${summary}\n`;
-  if(keyTerms.length) out += `\n🔑 KEY TERMS\n${keyTerms.join(' · ')}\n`;
-  if(nums.length) out += `\n🔢 VALUES FOUND\n${nums.join(' · ')}\n`;
-  out += `\n📊 ${sentences.length} sentences → ${n} key sentences`;
-  return out;
-}
-
-// ── Main actions ──
-async function doTranslate() {
-  const text = getInputText();
-  if (!text) { toast('প্রথমে টেক্সট দিন!', 'err'); return; }
-  switchOut('trans');
-  setLoading('transResult', 'অনুবাদ হচ্ছে... (MyMemory Free API)');
-  setProgress(5);
-  const ci = document.getElementById('transChunkInfo');
+/* ─────────────── Summarise ──────────── */
+async function summariseText() {
+  if (!originalText) { showToast('Load your text first.', 'error'); return; }
+  show('sec-summary');
+  showLoader('sum');
+  setOutput('summary', '');
   try {
-    const result = await translateAll(text, ci);
-    store.trans = result;
-    setContent('transResult', result, true);
-    setProgress(100); setTimeout(()=>setProgress(0), 700);
-    toast('✅ অনুবাদ সম্পন্ন!', 'ok');
-  } catch(e) { setError('transResult', e.message); setProgress(0); ci.style.display='none'; }
+    const result = await callClaude(
+      `You are an expert academic tutor for Textile Engineering (BSc level).\n` +
+      `Create a structured, concise summary of the following text. ` +
+      `Use bullet points for key concepts, bold important terms, and keep it under 30% of the original length. ` +
+      `Focus on definitions, core principles, and anything a 3rd-year textile engineering student must know for exams.\n` +
+      `Output ONLY the summary, no preamble.\n\n` +
+      `TEXT:\n${originalText}`
+    );
+    summaryText = result;
+    setOutput('summary', result);
+    showToast('Summary ready! 💡', 'success');
+  } catch(e) { showToast('Summarisation failed: ' + e.message, 'error'); }
+  hideLoader('sum');
 }
 
-function doSummarize() {
-  const text = getInputText();
-  if (!text) { toast('প্রথমে টেক্সট দিন!', 'err'); return; }
-  switchOut('summ');
-  setLoading('summResult', 'সারসংক্ষেপ তৈরি হচ্ছে...');
-  setProgress(40);
-  setTimeout(() => {
-    try {
-      const result = localSummarize(text);
-      store.summ = result;
-      setContent('summResult', result, false);
-      setProgress(100); setTimeout(()=>setProgress(0), 600);
-      toast('✅ Summary তৈরি!', 'ok');
-    } catch(e) { setError('summResult', e.message); setProgress(0); }
-  }, 250);
-}
-
+/* ─────────────── Translate summary ───── */
 async function translateSummary() {
-  if (!store.summ) { toast('আগে Summary করুন!', 'err'); return; }
-  switchOut('summ-bn');
-  setLoading('summBnResult', 'বাংলা Summary হচ্ছে...');
-  setProgress(5);
-  const ci = document.getElementById('summBnChunkInfo');
-  try {
-    const result = await translateAll(store.summ, ci);
-    store['summ-bn'] = result;
-    setContent('summBnResult', result, true);
-    setProgress(100); setTimeout(()=>setProgress(0), 700);
-    toast('✅ বাংলা Summary তৈরি!', 'ok');
-  } catch(e) { setError('summBnResult', e.message); setProgress(0); ci.style.display='none'; }
-}
-
-// ── TTS ──
-function toggleRead(target) {
-  const btnMap = { orig:'btnReadOrig', trans:'btnReadTrans', summ:'btnReadSumm', 'summ-bn':'btnReadSummBn' };
-  const btn = document.getElementById(btnMap[target]);
-
-  if (speakTarget === target && window.speechSynthesis.speaking) {
-    window.speechSynthesis.cancel(); speakTarget = null;
-    btn.classList.remove('speaking'); return;
+  if (!summaryText) {
+    showToast('Generate the English summary first.', 'error'); return;
   }
-  window.speechSynthesis.cancel();
-  document.querySelectorAll('.btn-green').forEach(b => b.classList.remove('speaking'));
-
-  const textMap = { orig: getInputText(), trans: store.trans, summ: store.summ, 'summ-bn': store['summ-bn'] };
-  const langMap = { orig:'en-US', trans:'bn-BD', summ:'en-US', 'summ-bn':'bn-BD' };
-  const text = textMap[target];
-  if (!text) { toast('পড়ার মতো কিছু নেই!', 'err'); return; }
-
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = langMap[target]; utter.rate = 0.88;
-  const voices = window.speechSynthesis.getVoices();
-  const isBn = langMap[target].startsWith('bn');
-  const preferred = voices.find(v => v.lang.startsWith(isBn ? 'bn' : 'en-US')) ||
-                    voices.find(v => v.lang.startsWith('en'));
-  if (preferred) utter.voice = preferred;
-  utter.onend = utter.onerror = () => { speakTarget = null; btn.classList.remove('speaking'); };
-  speakTarget = target; btn.classList.add('speaking');
-  window.speechSynthesis.speak(utter);
+  show('sec-sumtrans');
+  showLoader('sumtrans');
+  setOutput('sumtrans', '');
+  try {
+    const result = await callClaude(
+      `You are an expert English-to-Bengali translator for academic engineering content.\n` +
+      `Translate the following English summary into clear Bengali (Bangla script). ` +
+      `Preserve bullet-point structure. Keep technical terms and write Bengali meaning + English term in parentheses. ` +
+      `Output ONLY the Bengali translation, no extra text.\n\n` +
+      `SUMMARY:\n${summaryText}`
+    );
+    sumtransText = result;
+    setOutput('sumtrans', result);
+    showToast('Bengali summary ready! 🇧🇩', 'success');
+  } catch(e) { showToast('Translation failed: ' + e.message, 'error'); }
+  hideLoader('sumtrans');
 }
 
-// ── Copy ──
-function copyOut(key) {
-  if (!store[key]) { toast('কপি করার কিছু নেই!', 'err'); return; }
-  navigator.clipboard.writeText(store[key]).then(() => toast('📋 কপি হয়েছে!', 'ok'));
+/* ─────────────── Voice / TTS ────────── */
+function readAloud(which) {
+  if (!window.speechSynthesis) { showToast('Speech not supported in this browser.', 'error'); return; }
+  stopSpeech();
+
+  const map = { original: originalText, translation: translatedText, summary: summaryText, sumtrans: sumtransText };
+  const text = map[which];
+  if (!text) { showToast('No content yet — generate it first.', 'error'); return; }
+
+  const utt  = new SpeechSynthesisUtterance(text);
+  const isBengali = (which === 'translation' || which === 'sumtrans');
+  utt.lang  = isBengali ? 'bn-BD' : 'en-US';
+  utt.rate  = 0.92;
+  utt.pitch = 1;
+
+  // highlight button
+  document.querySelectorAll('.btn-teal').forEach(b => {
+    if (b.onclick && b.onclick.toString().includes(which)) b.classList.add('speaking');
+  });
+  utt.onend = () => document.querySelectorAll('.btn.speaking').forEach(b => b.classList.remove('speaking'));
+  currentUtterance = utt;
+  speechSynthesis.speak(utt);
 }
 
-// ── Helpers ──
-function setProgress(v) { document.getElementById('progressFill').style.width = v+'%'; }
-function setLoading(id, msg) {
-  document.getElementById(id).innerHTML =
-    `<div class="loading-msg"><div class="spinner"></div>${msg}</div>`;
+function stopSpeech() {
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  document.querySelectorAll('.btn.speaking').forEach(b => b.classList.remove('speaking'));
 }
-function setContent(id, text, isBengali) {
-  const el = document.getElementById(id);
-  el.className = 'result-box' + (isBengali ? ' bengali' : '');
-  const safe = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const html = safe
-    .replace(/📌[^\n]*/g, m=>`<div style="color:var(--accent3);font-weight:700;font-size:0.95rem;margin-bottom:5px">${m}</div>`)
-    .replace(/[─]{10,}/g, '<hr style="border:none;border-top:1px solid var(--border);margin:9px 0">')
-    .replace(/🔑[^\n]*/g, m=>`<div style="color:var(--orange);font-weight:600;margin:11px 0 4px">${m}</div>`)
-    .replace(/🔢[^\n]*/g, m=>`<div style="color:var(--blue);font-weight:600;margin:11px 0 4px">${m}</div>`)
-    .replace(/📊[^\n]*/g, m=>`<div style="color:var(--text-muted);font-size:0.72rem;margin-top:10px">${m}</div>`)
-    .replace(/\n/g,'<br>');
-  el.innerHTML = html;
+
+/* ─────────────── Claude API ─────────── */
+async function callClaude(prompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2048,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || 'API request failed (' + res.status + ')');
+  }
+  const data = await res.json();
+  return data.content.map(b => b.text || '').join('').trim();
 }
-function setError(id, msg) {
-  document.getElementById(id).innerHTML =
-    `<div style="color:var(--red);font-family:'Noto Sans Bengali',sans-serif;padding:18px;font-size:0.8rem;line-height:1.7">
-      ❌ সমস্যা: ${msg}<br><br>
-      <span style="color:var(--text-muted);font-size:0.73rem">ইন্টারনেট চেক করুন বা কিছুক্ষণ পর আবার চেষ্টা করুন।</span>
-    </div>`;
+
+/* ─────────────── Helpers ────────────── */
+function setOutput(id, text) {
+  const el = document.getElementById('out-' + id);
+  if (!text) {
+    el.innerHTML = '<span class="placeholder">' + placeholderFor(id) + '</span>';
+  } else {
+    el.textContent = text;
+  }
 }
-function toast(msg, type='') {
+function placeholderFor(id) {
+  const m = { original:'Your text will appear here.', translation:'বাংলা অনুবাদ এখানে দেখাবে।', summary:'Summary will appear here.', sumtrans:'বাংলা সারসংক্ষেপ এখানে দেখাবে।' };
+  return m[id] || '';
+}
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+function showLoader(id) { document.getElementById('ldr-' + id).classList.add('active'); }
+function hideLoader(id) { document.getElementById('ldr-' + id).classList.remove('active'); }
+
+function showToast(msg, type='') {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'show '+type;
-  clearTimeout(t._t); t._t = setTimeout(()=>t.className='', 3000);
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.className = '', 3500);
 }
-function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
-
-window.speechSynthesis.getVoices();
-window.addEventListener('load', ()=>window.speechSynthesis.getVoices());
 </script>
 </body>
 </html>
